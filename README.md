@@ -13,7 +13,10 @@ Requirement
 
 usage
 ==========
+
+```javascript
 git clone https://github.com/iversong/microblog.git
 cd /microblog
 npm install
 node app.js
+```
