@@ -1,0 +1,10 @@
+<% if (!user) { %>
+	<div class="starter-template">
+		<h1>WELCOME</h1>
+		<p class="lead">No matter how resourceful you are, you can't fight fate.</p>
+		<p class="lead">人纵有万般能耐，终也敌不过天命。-《霸王别姬》</p>
+	</div>
+<% } else { %>
+  	<%- partial('say') %>
+<% } %>
+	<%- include posts %>

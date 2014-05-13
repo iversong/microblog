@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script>
+        <script src="http://cdn.bootcss.com/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <header class="navbar navbar-inverse navbar-fixed-top bs-docs-nav" role="banner">
+      <div class="container">
+        <div class="navbar-header">
+          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="../" class="navbar-brand">MicroBlog</a>
+        </div>
+        <nav class="collapse navbar-collapse" role="navigation">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="/">首页</a></li>
+            <!-- <li><a href="/posts">文章列表</a></li> -->
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <!-- <li>
+              <a href="../about">关于</a>
+            </li> -->
+            <% if (!user) { %>
+              <li><a href="../login">登录</a></li>
+              <li>
+                <a href="../reg">注册</a>
+              </li>
+            <% } else { %>
+              <li><a href="../logout">登出</a></li>
+            <% } %>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <div class="container" role="main">
+      <% if (success) { %>
+        <div class="alert alert-success"><%= success %></div>
+      <% } %>
+      <% if (error) { %>
+        <div class="alert alert-danger"><%= error %></div>
+      <% } %>
+      <%- body %>
+    </div>
+    <footer class="bs-footer" role="contentinfo">
+      <!-- <div class="container">
+        <ul class="footer-links">
+          <li>当前版本： v3.0.3</li>
+        </ul>
+      </div> -->
+      <center>@iversong</center>
+    </footer>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="http://cdn.bootcss.com/jquery/2.1.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+  </body>
+</html>

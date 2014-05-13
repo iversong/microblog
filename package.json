@@ -1,0 +1,17 @@
+{
+  "name": "node-blog",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "connect-mongo": "^0.1.1",
+    "ejs": "*",
+    "express": "3.5.1",
+    "express-partials": "^0.2.0",
+    "moment": "^2.6.0",
+    "mongodb": "^1.4.2",
+    "mongoose": "^3.8.8"
+  }
+}

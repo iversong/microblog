@@ -1,0 +1,10 @@
+<br />
+<% if (total>10) { %>
+<ul class="pagination">
+  <li class="<%= isFirstPage?'disabled':'' %>" ><a <% if(!isFirstPage){%> href="?p=<%= isFirstPage?1:page-1 %>" <% }%> >&laquo;</a></li>
+  <% for(var i=1;i<=Math.ceil(total/10);i++) { %>
+  <li <% if(i==page){ %>class="active"<% } %> ><a href="?p=<%= i %>"><%= i %> <span class="sr-only">(current)</span></a></li>
+  <% } %>
+  <li class="<%= isLastPage?'disabled':'' %>" ><a href="?p=<%= isLastPage?page:page+1 %>">&raquo;</a></li>
+</ul>
+<% } %>
