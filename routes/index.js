@@ -6,9 +6,12 @@
 /*exports.index = function(req, res){
   res.render('index', { title: 'Express' });
 };*/
+var http = require('http');
 var crypto = require('crypto');
+var cheerio = require('cheerio');
 var User = require('../models/user.js');
 var Post = require('../models/post.js');
+var Youdao = require('../models/youdao.js');
 var Content = require('../models/content.js');
 module.exports = function(app) {
 	app.get('/', function(req, res) {
@@ -204,6 +207,51 @@ module.exports = function(app) {
 		/*Content.get(article,function(err,contents){
 			console.log(contents);
 		});*/
+	});
+
+	app.get('/creeper', function(req,res){
+		var url = "http://xue.youdao.com/w";
+		http.get(url, function(res_du) {
+		    var source = "";
+		    //通过 get 请求获取网页代码 source
+		    res_du.on('data', function(data) {
+		        source += data;
+		    });
+		    //获取到数据 source，我们可以对数据进行操作了!
+		    res_du.on('end', function() {
+		        //console.log(source);
+		        if (source.length > 0) {
+		        	var $ = cheerio.load(source);
+		        	var title = $('.current-data').find('.trans').text();
+		        	var dataList = $('.data-list ul>li');
+		        	var content = [];
+		        	var items = {};
+		        	var doYoudao = new Youdao();
+		        	console.log(dataList.length);
+		        	dataList.each(function(i, elem) {
+		        		items.date = $(this).find('h2').text();
+		        		items.content_en = $(this).find('.sen').text();
+		        		items.content_zn = $(this).find('.trans').text();
+		        		items.imgurl = $(this).find('.pic-show img').attr('src');
+						content[i] = items;
+						doYoudao.save(items,function(err){
+							if (err) {
+								console.log(err);
+							}
+						});
+					});
+		        	console.log(content);
+		        	//var title = dataList.children('.content.trans').text();
+		        	//console.log(title);
+		        	res.send(title);
+		        	//req.flash('success', '抓取数据成功!');
+	      			//res.redirect('/');
+		        };
+		        //这将输出很多的 html 代码
+		    });
+		}).on('error', function() {
+		    console.log("获取数据出现错误");
+		});
 	});
 }
 

@@ -6,6 +6,7 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "cheerio": "^0.17.0",
     "connect-mongo": "^0.1.1",
     "ejs": "*",
     "express": "3.5.1",
