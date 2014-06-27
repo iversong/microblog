@@ -210,8 +210,22 @@ module.exports = function(app) {
 	});
 
 	app.get('/creeper', function(req,res){
-		var url = "http://xue.youdao.com/w";
-		http.get(url, function(res_du) {
+		var base_url = "http://xue.youdao.com/w?page=";
+
+		var doUrls = new Urls(base_url);
+		console.info('do here');
+		// doUrls.hasNext(function(err,res){
+
+		// });
+		// 
+		doUrls.next(function(error,curr_link){
+				console.log('link:',curr_link);
+			});
+		/*while(){
+			
+		}*/
+		
+		/*http.get(url, function(res_du) {
 		    var source = "";
 		    //通过 get 请求获取网页代码 source
 		    res_du.on('data', function(data) {
@@ -251,7 +265,7 @@ module.exports = function(app) {
 		    });
 		}).on('error', function() {
 		    console.log("获取数据出现错误");
-		});
+		});*/
 	});
 }
 
@@ -269,4 +283,144 @@ function checkNotLogin(req, res, next) {
     return res.redirect('/');
   }
   next();
+}
+
+
+var BASE_URL = 'http://xue.youdao.com/w';
+var scrapy = {}
+/**
+ * Get page from url.
+ *
+ * Examples:
+ *
+ * scrapy.get('http://www.baidu.com', cb);
+ * // => 'baidu page html
+ * 
+ * @interface
+ * @param {String} url:ex http://www.baidu.com
+ * @param {Function} cb
+ * @private
+ */
+scrapy.get = function(url, cb){
+  http.get(url, function(res) {
+
+    var size = 0;
+    var chunks = [];
+
+    res.on('data', function(chunk){
+      size += chunk.length;
+      chunks.push(chunk);
+    });
+
+    res.on('end', function(){
+      var data = Buffer.concat(chunks, size);
+      cb(null, data);
+    });
+
+  }).on('error', function(e) {
+    cb(e, null);
+  });
+}
+
+var Urls = function(startUrl){
+  this.startUrl = startUrl;
+  this.page = 0;
+}
+
+Urls.prototype.next = function(cb){
+  var self = this;
+  
+  console.info(self.hasNextM());
+  
+  /*for (var i = 0; i < 180; i++) {
+  	 self.hasNext(function(err,bret){
+  		if (bret) {
+  			console.log('current_page:' + self.page);
+  		};
+  		self.page += 1;
+  		//return false;
+ 	 });
+  };*/
+  /*self.hasNext(function(err, bRet){
+  	console.log(22222222);
+    if(!bRet){
+    	console.log('no next-page');
+      	return null;
+    }
+    self.page += 1;
+    var curr_link = self.startUrl + self.page + '&type=all';
+    cb(null,curr_link);
+    // self.homeParse(function(err, topics){
+    //   self.page += 1;
+    //   cb(null, topics);
+    // })
+  })*/
+}
+
+Urls.prototype.hasNext = function(cb){
+  var self = this;
+  var url = self.startUrl + self.page + '&type=all';
+  //return 222;
+  scrapy.get(url, function(err, data){
+    $ = cheerio.load(data);
+    var next_page = $('.turn-num a').hasClass('next-page');
+    //console.log(next_page);
+    if(!next_page){
+      return cb(null,false);
+    }
+    return cb(null,true);
+
+  });
+};
+
+Urls.prototype.hasNextM = function(){
+  var self = this;
+  var url = self.startUrl + self.page + '&type=all';
+  //return 222;
+  scrapy.get(url, function(err, data){
+    $ = cheerio.load(data);
+    var next_page = $('.turn-num a').hasClass('next-page');
+    //console.log(next_page);
+    if(!next_page){
+    	consoel.log('no no no ');
+      return false;
+    }
+    return url;
+
+  });
+};
+
+/*Urls.prototype.homeParse = function(cb){
+  var self = this;
+  var topics = [];
+
+  async.filter(self.homePage, function(i, cb){
+    var url = BASE_URL + self.homePage[i].attribs['href']
+    scrapy.get(url, function(err, topic){
+      topics.push(topic.toString());
+      cb(null);
+    })
+
+  },function(err){
+    cb(err, topics);
+  });
+}*/
+
+Urls.prototype.parseData = function(html){
+  var self = this;
+  var url = this.startUrl + this.page + '&type=all';
+
+  var $ = cheerio.load(html);
+  var title = $('.current-data').find('.trans').text();
+  var dataList = $('.data-list ul>li');
+  var content = [];
+  var items = {};
+  dataList.each(function(i, elem) {
+	items.date = $(this).find('h2').text();
+	items.content_en = $(this).find('.sen').text();
+	items.content_zn = $(this).find('.trans').text();
+	items.imgurl = $(this).find('.pic-show img').attr('src');
+	content[i] = items;
+  });
+  return content;
 }
